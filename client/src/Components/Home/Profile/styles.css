@@ -1,0 +1,92 @@
+
+.avatar{
+    width: 20vh;
+    height: 20vh;
+    border-radius: 50%;
+    margin-right:  15vh;
+}
+
+.flex{
+    display:flex;
+    justify-content:center;
+    margin-right: 15vh;
+    margin-top: 4vh;
+}
+
+.nameSection {
+    display:flex;
+    justify-content:space-between;
+    margin-top: 1vh;
+}
+
+.marginLeft{
+    margin-left: 3vh;
+}
+
+.row{
+flex-direction: row;
+}
+
+.stories {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.pictures{
+    width: 60vh;
+    height: 44vh;
+    margin-right: 7px;
+    margin-left: 7px;
+    flex: 1;
+}
+
+.Posts{
+display: flex;
+flex-grow: 1;
+justify-content:center;
+align-items:center;
+align-content: center;
+/* flex-direction: column; */
+flex-wrap: wrap;
+}
+
+@media screen and (max-width:550px) and (min-width: 450px) {
+    .pictures{
+        width: 52vh;
+        height: 36vh;
+        flex: 1;
+    }
+} 
+
+@media screen and (max-width:450px) and (min-width: 400px) {
+    .pictures{
+        width: 47vh;
+        height: 33vh;
+        flex: 1;
+    }
+} 
+
+@media screen and (max-width:400px) and (min-width: 350px) {
+    .pictures{
+        width: 42vh;
+        height: 30vh;
+        flex: 1;
+    }
+} 
+
+@media screen and (max-width:350px) and (min-width: 300px) {
+    .pictures{
+        width: 38vh;
+        height: 28vh;
+        flex: 1;
+    }
+} 
+
+@media screen and (max-width:300px) and (min-width: 250px) {
+    .pictures{
+        width: 33vh;
+        height: 25vh;
+        flex: 1;
+    }
+} 
