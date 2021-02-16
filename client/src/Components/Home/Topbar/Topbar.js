@@ -1,4 +1,10 @@
 import React from 'react';
+import {Link,useHistory} from 'react-router-dom';
+
+
+
+
+
 import { fade, makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -15,6 +21,8 @@ import NotificationsIcon from '@material-ui/icons/Notifications';
 import MoreIcon from '@material-ui/icons/MoreVert';
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 import HomeIcon from '@material-ui/icons/Home';
+import instalogo from '../../../Images/instalogo.png'
+
 
 const useStyles = makeStyles((theme) => ({
   grow: {
@@ -95,9 +103,15 @@ export default function TopBar() {
   const handleMobileMenuClose = () => {
     setMobileMoreAnchorEl(null);
   };
-
+  const history = useHistory();     //////////////////////FOR HISTORY///////////////////////
+  const Logout = () => {
+    localStorage.clear()
+    history.push('/')
+    
+  }
   const handleMenuClose = () => {
     setAnchorEl(null);
+
     handleMobileMenuClose();
   };
 
@@ -106,6 +120,7 @@ export default function TopBar() {
   };
 
   const menuId = 'primary-search-account-menu';
+  
   const renderMenu = (
     <Menu
       anchorEl={anchorEl}
@@ -116,8 +131,10 @@ export default function TopBar() {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+      <MenuItem onClick={handleMenuClose}><Link style={{ color: 'black', textDecoration: 'none' }} to='/profile'> Profile </Link> </MenuItem>
+      <MenuItem onClick={handleMenuClose}><Link style={{ color: 'black', textDecoration: 'none' }}  to='/setting'> Settings </Link></MenuItem>
+      <MenuItem onClick={Logout} > Logout </MenuItem>
+
     </Menu>
   );
 
@@ -132,6 +149,14 @@ export default function TopBar() {
       open={isMobileMenuOpen}
       onClose={handleMobileMenuClose}
     >
+      <MenuItem>
+        <IconButton aria-label="show 4 new mails" color="inherit">
+          <Badge badgeContent={0} color="secondary">
+            <HomeIcon />
+          </Badge>
+        </IconButton>
+        <Link style={{ color: 'black', textDecoration: 'none' }} to="/feed">Home</Link>
+      </MenuItem>
       <MenuItem>
         <IconButton aria-label="show 4 new mails" color="inherit">
           <Badge badgeContent={4} color="secondary">
@@ -168,7 +193,8 @@ export default function TopBar() {
         <Toolbar  style={{backgroundColor:'#FBFBFF', color:'black'}} >
           <Typography className={classes.title}  variant="h6" noWrap style={{fontFamily: 'Lobster cursive', marginLeft:'10vw' }}>
           
-            Social Media App
+          <img src={instalogo} alt="LOGO" style={{height:"80%", width:"80%", marginTop:"10px"}} />
+
             
           </Typography>
           <div className={classes.search} style={{marginLeft:'16vw'}}>
@@ -189,7 +215,8 @@ export default function TopBar() {
           <IconButton aria-label="show 4 new mails" color="inherit">
               
               <Badge badgeContent={0} color="secondary">
-                <HomeIcon />
+               
+        <Link style={{textDecoration: 'none', color:"black" }} color="secondary" to="/feed"> <HomeIcon /></Link>
               </Badge>
             </IconButton>
             <IconButton aria-label="show 4 new mails" color="inherit">

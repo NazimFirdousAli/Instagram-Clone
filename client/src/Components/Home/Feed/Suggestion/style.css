@@ -1,0 +1,51 @@
+.main{
+    display:flex;
+    flex-direction:column;
+    /* justify-content:flex-start; */
+    align-items:flex-start ;
+    /* align-content:flex-start; */
+}
+
+.myProfile{
+    display:grid;
+    grid-template-columns: 20% 60%;
+    margin-top: 5%;
+}
+.suggestion{
+    display: flex;
+}
+.suggestionProfile{
+    
+    display:grid;
+    grid-template-columns: 40% 70%;
+    margin-top: 2%;
+}
+
+.avatar{
+    width: 13vh;
+    height: 13vh;
+    border-radius: 50%;
+    grid-area: 'avatar';
+}
+.suggestionAvatar{
+    margin-top: 2vh;
+    width: 6vh;
+    height: 5vh;
+    border-radius: 50%;
+    grid-area: 'suggestionAvatar';   
+}
+.myName{
+    flex-direction:column;
+    grid-area: 'myName';
+} 
+.suggestionName{
+    height: 3vh;
+    flex-direction:column;
+    grid-area: 'suggestionName';
+    font-size: 1.5vh;
+}
+.gray {
+    color:rgb(121, 117, 117)
+}
+
+

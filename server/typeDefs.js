@@ -34,7 +34,7 @@ module.exports = gql`
         users:[User]
     }
     type Mutation {
-        Signup(name:String!,email:String!,password:String!,phonenumber:String!,gender:String,avatar:Upload ,dateofbirth:String):Authpayload!
+        signUp(name:String!,email:String!,password:String!,phonenumber:String!,gender:String,avatar:Upload ,dateofbirth:String):Authpayload!
         Login(email:String!, password:String!):Authpayload!
         Post( content:String!):Post!
     }

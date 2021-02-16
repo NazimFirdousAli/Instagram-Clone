@@ -16,7 +16,7 @@ module.exports = {
 
     },
     Mutation: {
-        Signup: async (root, { password, avatar, ...data }, context, info) => {
+        signUp: async (root, { password, avatar, ...data }, context, info) => {
             const isEmailExists = await prisma.user.findUnique({ where: { email: data.email } });
             if (isEmailExists) throw new Error('Email is already taken...');
 
