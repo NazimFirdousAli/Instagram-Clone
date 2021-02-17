@@ -1,6 +1,8 @@
-import { React, useState } from 'react'
+import { React, useState, useEffect } from 'react'
 import { Link } from "react-router-dom";
 import { gql, useMutation } from '@apollo/client'
+import AUTH_TOKEN from './constants.js'
+import { Redirect,useHistory } from 'react-router-dom'
 
 import instalogo from '../Images/instalogo.png'
 
@@ -8,11 +10,9 @@ import instalogo from '../Images/instalogo.png'
 import { Paper, FormControl, TextField, Button } from '@material-ui/core';
 import FacebookIcon from '@material-ui/icons/Facebook';
 import { makeStyles } from '@material-ui/core/styles';
-import { Input } from '@material-ui/core';
-import PhoneInput from 'react-phone-number-input'
-
-
-
+import 'react-phone-number-input/style.css'
+import PhoneInput,{ formatPhoneNumber, formatPhoneNumberIntl, isValidPhoneNumber } from 'react-phone-number-input'
+import { parsePhoneNumber } from 'react-phone-number-input'
 
 
 const useStyles = makeStyles((theme) => ({
@@ -87,9 +87,18 @@ const initialState = {
     token: ''
 }
 function Signup() {
-
-
     const [form, setForm] = useState(initialState)
+    const [countryCode, setCountryCode] = useState('');
+
+    // console.log({ countryCode })
+
+    useEffect(() => {
+        fetch('https://extreme-ip-lookup.com/json/')
+            .then((res) => res.json())
+            .then(({ countryCode }) => setCountryCode(countryCode))
+            .catch((data, status) => console.log('Request failed:', data, status));
+    }, []);
+
 
     const classes = useStyles()
 
@@ -103,95 +112,109 @@ function Signup() {
         }
     })
     const onFormChange = (event) => {
-        const { name, type, value } = event.target
-        // console.log({type})
-        if (type == 'file') {
-            // console.log(event.target.files[0])
-            setForm({
-                ...form,
-                avatar: event.target.files[0]
+        console.log(event)
+        if(event)
+        if (typeof event === 'string' || !event) {
+            setForm({ ...form, phonenumber: event || '' })
+        } 
+        else {
+            const { name, type, value } = event.target
+            // console.log({type})
+            if (type == 'file') {
+                // console.log(event.target.files[0])
+                setForm({
+                    ...form,
+                    avatar: event.target.files[0]
 
-            })}
-            else{
+                })
+            }
+            else {
                 setForm({
                     ...form,
                     [event.target.name]: event.target.value,
-                
-            })}
+
+                })
+            }
+        }
+    }
+    const history = useHistory();
+    const submitForm = (event) => {
+        event.preventDefault();
+        if (form.password !== form.confirmpassword) {
+            alert("Password Not Matched")
+        }
+        else {
+            // form.avatar = form.avatar.replace(/C:\\fakepath\\/i, '')
+            // signUp({ variables: form })
+            console.log(form)
+            history.push('/Signup/details')
+            
+
         }
 
-        const submitForm = (event) => {
-            event.preventDefault();
-            if (form.password !== form.confirmpassword) {
-                alert("Password Not Matched")
-            }
-            else {
-                // form.avatar = form.avatar.replace(/C:\\fakepath\\/i, '')
-                signUp({ variables: form })
-                console.log(form)
+    }
+    // console.log(extreme-ip-lookup.com/json/)
 
-            }
+    // console.log(typeof form.phonenumber, form.phonenumber)
 
-        }
+    if (localStorage.getItem(AUTH_TOKEN)) return <Redirect to='/Feed' />
 
-        // console.log({form})
-
-
-        return (
-            <div className={classes.root}>
-                <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                    <div className={classes.paper}>
-                        <Paper elevation={2}>
-                            <br />
-                            <img src={instalogo} alt="LOGO" />
-                            <h5 style={{ color: '#A9A9A9', fontFamily: "Segoe UI", fontSize: "17px", fontWeight: "600" }}>
-                                Sign up to see photos and videos from your friends.
+    return (
+        <div className={classes.root}>
+            <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                <div className={classes.paper}>
+                    <Paper elevation={2}>
+                        <br />
+                        <img src={instalogo} alt="LOGO" />
+                        <h5 style={{ color: '#A9A9A9', fontFamily: "Segoe UI", fontSize: "17px", fontWeight: "600" }}>
+                            Sign up to see photos and videos from your friends.
             </h5>
-                            <Button variant="contained" style={{ backgroundColor: '#0095f6', color: 'white' }} >
-                                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                        <Button variant="contained" style={{ backgroundColor: '#0095f6', color: 'white' }} >
+                            <div style={{ display: 'flex', justifyContent: 'center' }}>
 
-                                    <FacebookIcon fontSize="small" /> Login with facebook
+                                <FacebookIcon fontSize="small" /> Login with facebook
                </div>             </Button>
 
-                            <br /><br />
-                            <div style={{ width: '100%', height: '12px', borderBottom: '1px solid #A9A9A9', textAlign: 'center', color: "#A9A9A9" }}>
-                                <span style={{ backgroundColor: 'white', padding: ' 0 10px' }}>
-                                    OR
+                        <br /><br />
+                        <div style={{ width: '100%', height: '12px', borderBottom: '1px solid #A9A9A9', textAlign: 'center', color: "#A9A9A9" }}>
+                            <span style={{ backgroundColor: 'white', padding: ' 0 10px' }}>
+                                OR
              </span>
-                            </div>
-                            <br />
-                            <form className={classes.inputField} onSubmit={submitForm} >
-                                <TextField name="phonenumber" onChange={onFormChange} type="tel" label="Phone Number" variant="outlined" helperText="incorrect entry" required />
-                                <TextField name="name" onChange={onFormChange} type="text" label="Full Name" variant="outlined" required />
-                                <TextField name="email" onChange={onFormChange} type="email" label="Email" variant="outlined" required />
-                                <TextField name="password" onChange={onFormChange} type="password" label="Password" variant="outlined" required />
-                                <TextField name="confirmpassword" onChange={onFormChange} type="password" label="Confirm Password" variant="outlined" required />
-                                <input type="file" id="avatar" name="avatar" onChange={onFormChange} /><br /><br />
+                        </div>
+                        <br />
+                        <form className={classes.inputField} onSubmit={submitForm} >
+                            {/* helperText="incorrect entry" */}
+                            <PhoneInput international defaultCountry={countryCode} name="phonenumber" onChange={onFormChange} required />
+                            <TextField name="name" onChange={onFormChange} type="text" label="Full Name" variant="outlined" required />
+                            <TextField name="email" onChange={onFormChange} type="email" label="Email" variant="outlined" required />
+                            <TextField name="password" onChange={onFormChange} type="password" label="Password" variant="outlined" required />
+                            <TextField name="confirmpassword" onChange={onFormChange} type="password" label="Confirm Password" variant="outlined" required />
+                            <input type="file" id="avatar" name="avatar" onChange={onFormChange} /><br /><br />
 
 
-                                <Button type="submit" variant="contained" style={{ backgroundColor: '#0095f6', color: 'white' }} >
-                                    Sign Up
+                            <Button type="submit" variant="contained" style={{ backgroundColor: '#0095f6', color: 'white' }} >
+                                Sign Up
              </Button>
-                                <div style={{ color: '#C0C0C0', fontSize: '10px' }}>
-                                    By signing up, you agree to our Terms , Data Policy and Cookies Policy
+                            <div style={{ color: '#C0C0C0', fontSize: '10px' }}>
+                                By signing up, you agree to our Terms , Data Policy and Cookies Policy
              </div>
 
 
-                            </form>
-                        </Paper>
+                        </form>
+                    </Paper>
 
-                    </div>
+                </div>
 
-                    <div className={classes.signUpPaper}>
-                        <Paper elevation={3}>
-                            <div style={{ marginTop: '1.5vw' }}>
-                                have an account?  <Link to="/" style={{ textDecoration: 'none' }}><span style={{ color: "#0095F6" }}>Login</span></Link>
-                            </div>
-                        </Paper>
-                    </div>
+                <div className={classes.signUpPaper}>
+                    <Paper elevation={3}>
+                        <div style={{ marginTop: '1.5vw' }}>
+                            have an account?  <Link to="/" style={{ textDecoration: 'none' }}><span style={{ color: "#0095F6" }}>Login</span></Link>
+                        </div>
+                    </Paper>
                 </div>
             </div>
-        )
-    }
+        </div>
+    )
+}
 
-    export default Signup
+export default Signup

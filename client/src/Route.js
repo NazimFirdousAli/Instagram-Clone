@@ -28,8 +28,7 @@ const RouteConfig = () => {
                     <Route exact path="/" component={Login}/>
                     <Route exact path="/Signup" component={Signup}/>
                     {/* <Route exact path="/Feed" component={Feed}/> */}
-                    <Route exact path="/Signup" component={Signup}/>
-                    <Route exact path="/AddDetails" component={SignupDetails}/>
+                    <Route  path="/Signup/details" component={SignupDetails}/>
                     <AuthenticationRoute  path="/Feed" component={Feed}/>
                     <Route path="*" component={onError}/>
                         
