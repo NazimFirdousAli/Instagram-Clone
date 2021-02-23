@@ -1,34 +1,44 @@
-const express = require('express');
-const morgan = require('morgan');
-const http = require('http');
-const { ApolloServer } = require('apollo-server-express');
-const fs = require('fs');
+// const { ApolloServer } = require('apollo-server');
+// const typeDefs = require('./typeDefs');
+// const resolvers = require('./resolvers');
 
+
+// const server = new ApolloServer({
+//   typeDefs,
+//   resolvers,
+//   context: ({ req, res }) => ({ req, res })
+// })
+// server.listen().then(({ url }) => {
+//   console.log(`🚀  Server ready at ${url}`);
+// });
+
+const fs = require('fs');
+const express = require('express');
+const { ApolloServer, gql } = require('apollo-server-express');
 const typeDefs = require('./typeDefs');
 const resolvers = require('./resolvers');
 
+const PORT = 4000;
+
 const app = express();
 
-app.use(morgan('dev'));
-
-// downloading files
-app.get(`/images/:filename`, (req, res) => {
-	const file = `${__dirname}/uploads/${req.params.filename}`;
-	if (fs.existsSync(file)) return res.download(file);
-	res.status(404).send('Image not found...');
-});
-
-const server = new ApolloServer({ typeDefs, resolvers });
-
+const server = new ApolloServer({ typeDefs, resolvers, context: ({req, res}) => ({ req, res }) });
 server.applyMiddleware({ app, path: '/graphql' });
 
-const httpServer = http.createServer(app);
-server.installSubscriptionHandlers(httpServer);
+app.get('/images/:filename', (req, res) => {
+  const { filename } = req.params;
+  console.log(`./uploads/${filename}`)
+  if (!fs.existsSync(`./uploads/${filename}`)) return res.status(404).send('Image not found...')
+  return res.status(200).download(`./uploads/${filename}`)
+})
 
-const port = process.env.PORT || 4000;
+app.listen({ port: PORT }, () =>
+  console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`)
+)
 
-httpServer.listen({ port }, () => {
-	// console.log(`🚀 Apollo Server on http://localhost:${port}`)
-	console.log(`🚀 Apollo Server on http://localhost:${port}${server.graphqlPath}`);
-	console.log(`🚀 Subscriptions ready at ws://localhost:${port}${server.subscriptionsPath}`);
-});
+
+
+
+
+
+

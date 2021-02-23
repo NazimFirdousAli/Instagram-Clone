@@ -17,6 +17,7 @@ module.exports = gql`
 
     type Post{
         id:Int!
+        picture:String
         content:String!
         user:User
     }
@@ -32,12 +33,15 @@ module.exports = gql`
 
     type Query {
         users:[User]
+        userPosts: User!
+        loggedInUser: User!
+        # allPosts: User!
+
     }
     type Mutation {
         signUp(name:String!,email:String!,password:String!,phonenumber:String!,gender:String,avatar:Upload ,dateofbirth:String):Authpayload!
         Login(email:String!, password:String!):Authpayload!
-        Post( content:String!):Post!
-    }
+        createPost(picture:Upload!, content:String!):Post!    }
     type Subscription {
         _: Boolean
     }

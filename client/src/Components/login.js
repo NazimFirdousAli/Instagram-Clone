@@ -126,8 +126,9 @@ function Login() {
 
             console.log(data)
             localStorage.setItem(AUTH_TOKEN, data.Login.token)
-            console.log(localStorage)
             history.push('/Feed')
+            console.log(localStorage)
+            console.log()
             // }
 
         },

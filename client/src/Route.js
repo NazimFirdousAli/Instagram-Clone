@@ -4,6 +4,7 @@ import Login from './Components/login.js'
 import SignupDetails from './Components/signupDetails.js'
 import Feed from './Components/Home/Feed/index.js'
 import AuthenticationRoute from './Components/authenticationRoute.js'
+import Profile from './Components/Home/Profile/index.js'
 
 
 // import Feed from './Components/Home/Feed/index.js'
@@ -30,6 +31,7 @@ const RouteConfig = () => {
                     {/* <Route exact path="/Feed" component={Feed}/> */}
                     <Route  path="/Signup/details" component={SignupDetails}/>
                     <AuthenticationRoute  path="/Feed" component={Feed}/>
+                    <AuthenticationRoute  path="/profile" component={Profile}/>
                     <Route path="*" component={onError}/>
                         
                     

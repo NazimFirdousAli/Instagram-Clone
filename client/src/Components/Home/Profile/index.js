@@ -3,27 +3,46 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import Grid from '@material-ui/core/Grid';
 
 // Component
-import profilePicture from '../../../Assets/Images/profilePicture.jpg'
+import profilePicture from '../../../Images/Lion.jpg'
 import Topbar from '../Topbar/Topbar'
 import Tabs from './Tabs'
 import './styles.css'
+
+
+
+import {gql,useQuery } from '@apollo/client'
+// import { Token } from 'graphql';
+
+const ShowData =  gql`
+query {
+  loggedInUser {
+    name,
+    email,
+    avatar
+
+  }
+}
+`
+
+
 const Profile = () => {
-    const [name, setName] = useState('Muhammad Saad Ali')
+    const {data, loading} = useQuery(ShowData);
+    console.log(data)
     const [post, setPost] = useState(0)
     const [followers, setFollowers] = useState(0)
     const [following, setFollowing] = useState(0)
-
+    if (loading || !data) return <h3>loading...</h3>
     return (
         <div >
             <Topbar />
             <br />
             <div>
                 <Grid className='flex' container spacing={1}>
-                    <img alt="Avatar" src={profilePicture} className="avatar" />
+                    <img alt="Avatar" src={`/images/${data.loggedInUser.avatar}`} className="avatar" />
                     <div >
 
                         <div className='nameSection' >
-                            <div className='marginLeft'>{name}</div>
+                            <div className='marginLeft'>{data.loggedInUser.name}</div>
 
                             <div className='marginLeft'>
                                 <button> Edit Profile</button>
@@ -41,7 +60,7 @@ const Profile = () => {
 
                         </div>
                         <div className='nameSection' >
-                            <div className='marginLeft '> <b> {name} </b> </div>
+                            <div className='marginLeft '> <b>{data.loggedInUser.name}</b> </div>
 
                         </div>
                     </div>

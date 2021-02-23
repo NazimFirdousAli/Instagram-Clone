@@ -1,18 +1,31 @@
-const { PrismaClient } = require('@prisma/client')
+const { PrismaClient, Prisma } = require('@prisma/client')
 const prisma = new PrismaClient();
 
 // import { FileUpload } from 'graphql-upload'
 
-const { APP_SECRET } = require('./utils.js')
+const { APP_SECRET, getUserID } = require('./utils.js')
 
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const path = require('path')
-const fs = require('fs')
+const fs = require('fs');
+const { info } = require('console');
 
 module.exports = {
     Query: {
-        users: async () => { return await prisma.user.findMany() },
+        users: async () => prisma.user.findMany(),
+        // allPosts: async () => prisma.post.findMany(),
+        userPosts: async (root,args,context,info) => {
+            const user = await getUserID(context)
+            console.log(user.id)
+            const allpost = await prisma.user.findUnique({where:{
+                id: user.id
+            }})
+            return allpost
+        },
+        loggedInUser: async (root, args, context, info) => {
+            return getUserID(context)
+        }
 
     },
     Mutation: {
@@ -22,22 +35,17 @@ module.exports = {
 
             const hashPassword = bcrypt.hashSync(password, 10)
             data.password = hashPassword;
-
-            console.log('avatar', avatar)
-
-            // if (typeof avatar === 'object' && avatar) {
-                data.avatar = await new Promise((resolve, reject) => {
-                    return avatar.then(({ createReadStream, ...rest })=> {
-                        const id = Math.random().toString(32).substr(7);
-                        const filename = `${id}-${rest.filename}`;
-                        if (!fs.existsSync("./uploads")) fs.mkdirSync("./uploads");
-                        createReadStream()
-                            .pipe(fs.createWriteStream(path.join('./uploads', filename)))
-                            .on('error', (error) => reject(new Error(error.message)))
-                            .on('finish', () => resolve(filename));
-                    })
+            data.avatar = await new Promise((resolve, reject) => {
+                return avatar.then(({ createReadStream, ...rest }) => {
+                    const id = Math.random().toString(32).substr(7);
+                    const filename = `${id}-${rest.filename}`;
+                    if (!fs.existsSync("./uploads")) fs.mkdirSync("./uploads");
+                    createReadStream()
+                        .pipe(fs.createWriteStream(path.join('./uploads', filename)))
+                        .on('error', (error) => reject(new Error(error.message)))
+                        .on('finish', () => resolve(filename));
                 })
-            // }
+            })
 
             console.log('after', data.avatar);
 
@@ -67,8 +75,46 @@ module.exports = {
                 user: findUser
             }
         },
-        Post: async (root, { ...data }, context, info) => {
+        createPost: async (root, { picture, ...data }, context, info) => {
+            const user = await getUserID(context)
 
+            data.picture = await new Promise((resolve, reject) => {
+                return picture.then(({ createReadStream, ...rest }) => {
+                    const id = Math.random().toString(32).substr(7);
+                    const filename = `${id}-${rest.filename}`;
+                    if (!fs.existsSync("./uploads")) fs.mkdirSync("./uploads");
+                    createReadStream()
+                        .pipe(fs.createWriteStream(path.join('./uploads', filename)))
+                        .on('error', (error) => reject(new Error(error.message)))
+                        .on('finish', () => resolve(filename));
+                })
+            })
+
+            data.user = {
+                connect: {
+                    id: user.id
+                }
+            }
+            return prisma.post.create({ data })
+        },
+        // showData: async(root,args,context,info) => {
+        //     const userToken = await getUserID(context)
+        //     const show = await prisma.token.findUnique({
+        //         where:{token:userToken}
+        //     })
+        //     return(user)
+
+        // }
+    },
+
+    User: {
+        posts: async (root, args, context, info) => {
+            return prisma.post.findMany({ where: { userId: root.id } })
+        }
+    },
+    Post: {
+        user: async (root, args, context, info) => {
+            return prisma.user.findUnique({ where: { id: root.userId } })
         }
     }
 }

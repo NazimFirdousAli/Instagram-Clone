@@ -1,4 +1,4 @@
-import { React, useState, useEffect } from 'react'
+import { React, useState, useEffect,createContext } from 'react'
 import { Link } from "react-router-dom";
 import { gql, useMutation } from '@apollo/client'
 import AUTH_TOKEN from './constants.js'
@@ -13,6 +13,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import 'react-phone-number-input/style.css'
 import PhoneInput,{ formatPhoneNumber, formatPhoneNumberIntl, isValidPhoneNumber } from 'react-phone-number-input'
 import { parsePhoneNumber } from 'react-phone-number-input'
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -89,8 +91,10 @@ const initialState = {
 function Signup() {
     const [form, setForm] = useState(initialState)
     const [countryCode, setCountryCode] = useState('');
-
+    
     // console.log({ countryCode })
+    
+    const data = createContext(form)
 
     useEffect(() => {
         fetch('https://extreme-ip-lookup.com/json/')
@@ -107,6 +111,7 @@ function Signup() {
             setForm(initialState)
         },
         onError: ({ message }) => {
+            // <Alert severity="error">error</Alert>
             alert(message)
 
         }
@@ -119,7 +124,7 @@ function Signup() {
         } 
         else {
             const { name, type, value } = event.target
-            // console.log({type})
+            console.log({type})
             if (type == 'file') {
                 // console.log(event.target.files[0])
                 setForm({
@@ -145,7 +150,7 @@ function Signup() {
         }
         else {
             // form.avatar = form.avatar.replace(/C:\\fakepath\\/i, '')
-            // signUp({ variables: form })
+            signUp({ variables: form })
             console.log(form)
             history.push('/Signup/details')
             

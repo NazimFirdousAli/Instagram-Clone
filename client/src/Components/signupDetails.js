@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import React, { useState,useContext } from 'react'
+import Signup from './signup.js'
 
 
 import { Paper, Button } from '@material-ui/core';
@@ -73,6 +74,8 @@ const initialState = {
 function SignupDetails() {
     const classes = useStyles()
     const [form, setForm] = useState(initialState)
+    // const pastData = useContext(Signup)
+    // console.log({pastData})
 
     const onFormChange = (event) => {
         const { name, type, value } = event.target

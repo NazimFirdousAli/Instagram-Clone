@@ -1,7 +1,7 @@
 import React from 'react';
-import {Link,useHistory} from 'react-router-dom';
-
-
+import { Link, useHistory } from 'react-router-dom';
+import AUTH_TOKEN from '../../constants.js'
+import UploadPictures from './Upload.js'
 
 
 
@@ -18,15 +18,17 @@ import SearchIcon from '@material-ui/icons/Search';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import MailIcon from '@material-ui/icons/Mail';
 import NotificationsIcon from '@material-ui/icons/Notifications';
-import MoreIcon from '@material-ui/icons/MoreVert';
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 import HomeIcon from '@material-ui/icons/Home';
+import AddPhotoAlternateIcon from '@material-ui/icons/AddPhotoAlternate';
 import instalogo from '../../../Images/instalogo.png'
+import Modal from '@material-ui/core/Modal';
+
 
 
 const useStyles = makeStyles((theme) => ({
   grow: {
-    flexGrow: 1,
+    flexGrow: 0.8,
   },
   menuButton: {
     marginRight: theme.spacing(2),
@@ -107,7 +109,7 @@ export default function TopBar() {
   const Logout = () => {
     localStorage.clear()
     history.push('/')
-    
+
   }
   const handleMenuClose = () => {
     setAnchorEl(null);
@@ -118,9 +120,19 @@ export default function TopBar() {
   const handleMobileMenuOpen = (event) => {
     setMobileMoreAnchorEl(event.currentTarget);
   };
+  //MODAL
+  const [open, setOpen] = React.useState(false);
+
+  const handleOpen = () => {
+    setOpen(true);
+
+  }
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   const menuId = 'primary-search-account-menu';
-  
+
   const renderMenu = (
     <Menu
       anchorEl={anchorEl}
@@ -132,7 +144,7 @@ export default function TopBar() {
       onClose={handleMenuClose}
     >
       <MenuItem onClick={handleMenuClose}><Link style={{ color: 'black', textDecoration: 'none' }} to='/profile'> Profile </Link> </MenuItem>
-      <MenuItem onClick={handleMenuClose}><Link style={{ color: 'black', textDecoration: 'none' }}  to='/setting'> Settings </Link></MenuItem>
+      <MenuItem onClick={handleMenuClose}><Link style={{ color: 'black', textDecoration: 'none' }} to='/setting'> Settings </Link></MenuItem>
       <MenuItem onClick={Logout} > Logout </MenuItem>
 
     </Menu>
@@ -151,7 +163,7 @@ export default function TopBar() {
     >
       <MenuItem>
         <IconButton aria-label="show 4 new mails" color="inherit">
-          <Badge badgeContent={0} color="secondary">
+          <Badge badgeContent={0} color="secondary" >
             <HomeIcon />
           </Badge>
         </IconButton>
@@ -188,16 +200,14 @@ export default function TopBar() {
   );
 
   return (
+
     <div className={classes.grow}>
       <AppBar position="static">
-        <Toolbar  style={{backgroundColor:'#FBFBFF', color:'black'}} >
-          <Typography className={classes.title}  variant="h6" noWrap style={{fontFamily: 'Lobster cursive', marginLeft:'10vw' }}>
-          
-          <img src={instalogo} alt="LOGO" style={{height:"80%", width:"80%", marginTop:"10px"}} />
-
-            
+        <Toolbar style={{ backgroundColor: '#FBFBFF', color: 'black' }} >
+          <Typography className={classes.title} variant="h6" noWrap style={{ fontFamily: 'Lobster cursive', marginLeft: '10vw' }}>
+            <img src={instalogo} alt="LOGO" onClick={()=> {history.push('/Feed')}} style={{ height: "80%", width: "80%", marginTop: "10px" }} />
           </Typography>
-          <div className={classes.search} style={{marginLeft:'16vw'}}>
+          <div className={classes.search} style={{ marginLeft: '16vw' }}>
             <div className={classes.searchIcon}>
               <SearchIcon />
             </div>
@@ -211,51 +221,51 @@ export default function TopBar() {
             />
           </div>
           <div className={classes.grow} />
-          <div className={classes.sectionDesktop}>
-          <IconButton aria-label="show 4 new mails" color="inherit">
-              
+          {/* Upload Image */}
+          <div >
+            <IconButton aria-label="show 4 new mails" color="inherit" onClick={handleOpen}>
               <Badge badgeContent={0} color="secondary">
-               
-        <Link style={{textDecoration: 'none', color:"black" }} color="secondary" to="/feed"> <HomeIcon /></Link>
+                <AddPhotoAlternateIcon />
               </Badge>
             </IconButton>
+            <Modal open={open}
+              onClose={handleClose}>
+              <UploadPictures handleClose={handleClose}/>
+            </Modal>
+          </div>
+          {/* Home Icon */}
+          <div style={{ marginTop: '5px' }}>
             <IconButton aria-label="show 4 new mails" color="inherit">
-              
               <Badge badgeContent={0} color="secondary">
-                <MailIcon />
+                <Link style={{ textDecoration: 'none', color: "black" }} color="secondary" to="/feed"> <HomeIcon /></Link>
               </Badge>
             </IconButton>
-            <IconButton aria-label="show 17 new notifications" color="inherit">
-              <Badge badgeContent={0} color="secondary">
-                <FavoriteBorderIcon />
-              </Badge>
-            </IconButton>
-            <IconButton
-              edge="end"
-              aria-label="account of current user"
-              aria-controls={menuId}
-              aria-haspopup="true"
-              onClick={handleProfileMenuOpen}
-              color="inherit"
-            >
-              <AccountCircle />
-            </IconButton>
           </div>
-          <div className={classes.sectionMobile}>
-            <IconButton
-              aria-label="show more"
-              aria-controls={mobileMenuId}
-              aria-haspopup="true"
-              onClick={handleMobileMenuOpen}
-              color="inherit"
-            >
-              <MoreIcon />
-            </IconButton>
-          </div>
+          <IconButton aria-label="show 4 new mails" color="inherit">
+            <Badge badgeContent={0} color="secondary">
+              <MailIcon />
+            </Badge>
+          </IconButton>
+          <IconButton aria-label="show 17 new notifications" color="inherit">
+            <Badge badgeContent={0} color="secondary">
+              <FavoriteBorderIcon />
+            </Badge>
+          </IconButton>
+          <IconButton
+            edge="end"
+            aria-label="account of current user"
+            aria-controls={menuId}
+            aria-haspopup="true"
+            onClick={handleProfileMenuOpen}
+            color="inherit"
+          >
+            <AccountCircle />
+          </IconButton>
         </Toolbar>
       </AppBar>
       {renderMobileMenu}
       {renderMenu}
     </div>
+
   );
 }
