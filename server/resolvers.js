@@ -11,16 +11,20 @@ const path = require('path')
 const fs = require('fs');
 const { info } = require('console');
 
+const { existsSync, mkdirSync, unlinkSync, createWriteStream } = require('fs');
+
 module.exports = {
     Query: {
         users: async () => prisma.user.findMany(),
         // allPosts: async () => prisma.post.findMany(),
-        userPosts: async (root,args,context,info) => {
+        userPosts: async (root, args, context, info) => {
             const user = await getUserID(context)
             console.log(user.id)
-            const allpost = await prisma.user.findUnique({where:{
-                id: user.id
-            }})
+            const allpost = await prisma.user.findUnique({
+                where: {
+                    id: user.id
+                }
+            })
             return allpost
         },
         loggedInUser: async (root, args, context, info) => {
@@ -97,6 +101,39 @@ module.exports = {
             }
             return prisma.post.create({ data })
         },
+
+        updateDetails: async (root, {avatar, ...data }, context, info) => {
+            // ...data: [name, email, phonenumber]
+            const user = await getUserID(context)
+            // data.avatar = await saveImage(data.avatar, user.avatar)
+            const isEmailDuplicate = await prisma.user.findFirst({
+                where: { email: data.email, NOT: { id: user.id } }
+            })
+            if (isEmailDuplicate) throw new Error('Email already exists')
+
+            data.avatar = await new Promise((resolve,reject)=> {
+                avatar.then(({ createReadStream, ...rest }) => {
+                    const filename = `${Math.random().toString(32).substr(7, 5)}-${rest.filename}`;
+        
+                    // checking whether the uploads folder is exists
+                    if (!existsSync('./uploads')) mkdirSync('./uploads');
+        
+                    // deleting if old file is given
+                    if (user.avatar && existsSync(`./uploads/${user.avatar}`)) unlinkSync(`./uploads/${user.avatar}`);
+        
+                    createReadStream()
+                        .pipe(createWriteStream(path.join('./uploads', filename)))
+                        .on('error', (error) => reject(new Error(error.message)))
+                        .on('finish', () => resolve(filename));
+                });
+            })
+            const updateData = await prisma.user.update({
+                where: { id: user.id },
+                data
+            })
+
+            return updateData
+        }
         // showData: async(root,args,context,info) => {
         //     const userToken = await getUserID(context)
         //     const show = await prisma.token.findUnique({

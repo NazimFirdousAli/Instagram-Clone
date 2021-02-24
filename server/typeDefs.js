@@ -41,7 +41,11 @@ module.exports = gql`
     type Mutation {
         signUp(name:String!,email:String!,password:String!,phonenumber:String!,gender:String,avatar:Upload ,dateofbirth:String):Authpayload!
         Login(email:String!, password:String!):Authpayload!
-        createPost(picture:Upload!, content:String!):Post!    }
+        createPost(picture:Upload!, content:String!):Post!
+        updateDetails(name:String!,email:String!,phonenumber:String!,avatar:Upload):User!
+        updatePassword(password:String!):User!
+
+        }
     type Subscription {
         _: Boolean
     }

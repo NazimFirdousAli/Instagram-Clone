@@ -91,7 +91,7 @@ const initialState = {
 function UploadPictures({handleClose}) {
     const classes = useStyles();
     const [form, setForm] = useState(initialState)
-    const [imagePreview, setImagePreview] = useState('')
+    const [imagePreview, setImagePreview] = useState(pleaseUploadImage)
     const history = useHistory();
     const {data,loading} = useQuery(ShowData);
     const [createPost] = useMutation(CREATEPOST, {
@@ -141,7 +141,7 @@ function UploadPictures({handleClose}) {
                     title={data.loggedInUser.name}
                 />
                 <form onSubmit={onFormSubmit}>
-                    <img id="image-file" src={imagePreview} height="200px" width="200px" style={{marginLeft:"20%"}} required/><br />
+                    <img id="image-file" alt="Please add the image" src={imagePreview} height="200px" width="200px" style={{marginLeft:"20%"}} required/><br />
                     <input type="file" id="picture" name="picture" accept="image/*" onChange={onFormChange} required/>
                     <TextField name="content" type="text" className={classes.textField} InputProps={{ disableUnderline: true }} InputLabelProps={{ style: { color: 'black', paddingLeft: "5px", fontSize: "15px", fontFamily: "Segoe UI" }, }} label="Caption" onChange={onFormChange} required />
                     <br/>

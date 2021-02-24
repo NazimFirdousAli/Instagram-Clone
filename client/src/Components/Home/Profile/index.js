@@ -3,10 +3,13 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import Grid from '@material-ui/core/Grid';
 
 // Component
-import profilePicture from '../../../Images/Lion.jpg'
 import Topbar from '../Topbar/Topbar'
 import Tabs from './Tabs'
 import './styles.css'
+
+//link
+import {Link} from 'react-router-dom'
+
 
 
 
@@ -45,7 +48,8 @@ const Profile = () => {
                             <div className='marginLeft'>{data.loggedInUser.name}</div>
 
                             <div className='marginLeft'>
-                                <button> Edit Profile</button>
+                                <button ><Link to='/profile/updateprofile' style={{textDecoration:'none', color:'black'}}> Edit Profile</Link></button>
+                                
                             </div>
                             <div className='marginLeft'>  <SettingsIcon /></div>
 

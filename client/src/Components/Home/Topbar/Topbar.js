@@ -202,8 +202,8 @@ export default function TopBar() {
   return (
 
     <div className={classes.grow}>
-      <AppBar position="static">
-        <Toolbar style={{ backgroundColor: '#FBFBFF', color: 'black' }} >
+      <AppBar position="static" elevation={0} style={{borderBottom:'1px solid #DBDBDB'}}>
+        <Toolbar style={{ backgroundColor: '#FFFFFF', color: 'black' }} >
           <Typography className={classes.title} variant="h6" noWrap style={{ fontFamily: 'Lobster cursive', marginLeft: '10vw' }}>
             <img src={instalogo} alt="LOGO" onClick={()=> {history.push('/Feed')}} style={{ height: "80%", width: "80%", marginTop: "10px" }} />
           </Typography>
