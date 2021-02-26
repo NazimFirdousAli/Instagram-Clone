@@ -1,6 +1,7 @@
-import React from 'react'
+import React, { useState,useContext } from 'react'
 import Topbar from '../Topbar/Topbar.js'
 import profilePicture from '../../../Images/Lion.jpg'
+// import Context from '../../../Context.js'
 
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
@@ -15,10 +16,30 @@ import CardHeader from '@material-ui/core/CardHeader';
 import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
 
+//GQL
+import { gql } from '@apollo/client'
 
+// const USER = gql`
+// query{
+//     loggedInUser{
+//         name
+//         email
+//         phonenumber
+//         avatar
+//     }
+// }
+// `
 
-
-
+const UPDATEUSER = gql`
+mutation($name:String!,$email:String!,$phonenumber:String!,$avatar:Upload){
+    updateDetails(name:$name,email:$email,phonenumber:$phonenumber,avatar:$avatar){
+        name,
+        phonenumber,
+        email,
+        avatar
+    }
+}
+`
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
 
@@ -76,7 +97,7 @@ const useStyles = makeStyles((theme) => ({
         border: '1px solid #DBDBDB'
     },
     margin: {
-        margin: '-50px 0px 0px 0px',
+        margin: '0px 0px 50px 0px',
         fontSize: '9px',
         textAlign: 'center',
         color: '#17A2F7'
@@ -84,16 +105,49 @@ const useStyles = makeStyles((theme) => ({
 
 }));
 
+const initialState = {
+    name: '',
+    email: '',
+    phonenumber: '',
+    avatar: ''
 
+}
 
 function UpdateProfile() {
     const classes = useStyles();
     const [value, setValue] = React.useState(0);
+    const [previousValue, setPreviousValue] = useState(initialState)
+
+    // const userValues = useContext(Context)
+    // const { data, loading, error } = useQuery(USER)
+
+    // console.log(data)
+
+    function ShowValue(event){
+        
+    }
+    
+
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
 
+
+    const formSubmit = () => {
+        
+    }
+    const updateValues = (event) => {
+        // setPreviousValue({
+        //     ...data,
+        //     [event.target.name]:event.target.value
+        // });
+        // return(
+        //     console.log(previousValue)
+        // )
+    }
+    
+    // if (loading) return <h1>Loading</h1>
     return (
         <div style={{ backgroundColor: '#FAFAFA', minHeight: '100%' }}>
             <Topbar />
@@ -114,12 +168,10 @@ function UpdateProfile() {
                     <Tab label="Apps and Websites" {...a11yProps(2)} />
                     <Tab label="Email and SMS" {...a11yProps(3)} />
                     <Tab label="Push Notification" {...a11yProps(4)} />
-                    <Tab label="Item Six" {...a11yProps(5)} />
-                    <Tab label="Item Seven" {...a11yProps(6)} />
                 </Tabs>
                 <TabPanel value={value} index={0}>
                     <div style={{ display: 'flex', justifyContent: 'center', marginLeft: '70px' }}>
-                        <form>
+                        <form onSubmit={formSubmit} >
                             <CardHeader
                                 avatar={
                                     <img src={profilePicture} className={classes.avatar} alt='Saad' />
@@ -132,30 +184,25 @@ function UpdateProfile() {
                                     >
                                     </IconButton>
                                 }
-                                title='USERNAME'
+                                title="Username"
                             />
-                            <Button className={classes.margin}>
-                                Update Picture
-                                </Button>
+                            <input type='file' className={classes.margin}/>
                             <div style={{ textAlign: 'right' }}>
-                                <label><b>Username</b></label>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <input type="text" style={{ border: '1px solid #dbdbdb', height: '30px', borderRadius: '5px' }}></input>
+                                <label><b>Username</b></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <input name="name" onChange={updateValues} type="text" style={{ border: '1px solid #dbdbdb', height: '30px', borderRadius: '5px' }}></input>
                                 <br />
                                 <br />
-                                <label><b>Phone Number</b></label>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <input type="number" style={{ border: '1px solid #dbdbdb', height: '30px', borderRadius: '5px' }}></input>
+                                <label><b>Phone Number</b></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <input onChange={updateValues} name="phonenumber" type="number" style={{ border: '1px solid #dbdbdb', height: '30px', borderRadius: '5px' }}></input>
                                 <br />
                                 <br />
-                                <label><b>Email</b></label>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <input type="email" style={{ border: '1px solid #dbdbdb', height: '30px', borderRadius: '5px' }}></input>
+                                <label><b>Email</b></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <input onChange={updateValues} name="email" type="email" style={{ border: '1px solid #dbdbdb', height: '30px', borderRadius: '5px' }}></input>
                                 <br />
                                 <br />
                                 <br />
                                 <div style={{ marginRight: '90px' }}>
-                                    <Button variant="contained" style={{ backgroundColor: '#17a2f7', color: 'white' }}>
+                                    <Button type='submit' variant="contained" style={{ backgroundColor: '#17a2f7', color: 'white' }}>
                                         Submit</Button>
                                 </div>
 
@@ -183,17 +230,17 @@ function UpdateProfile() {
                             <div style={{ textAlign: 'right' }}>
                                 <label><b>Old Password</b></label>
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <input type="password" style={{ border: '1px solid #dbdbdb', height: '30px', borderRadius: '5px',backgroundColor:'#FAFAFA' }}></input>
+                <input type="password" style={{ border: '1px solid #dbdbdb', height: '30px', borderRadius: '5px', backgroundColor: '#FAFAFA' }}></input>
                                 <br />
                                 <br />
                                 <label><b>New Password</b></label>
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <input type="password" style={{ border: '1px solid #dbdbdb', height: '30px', borderRadius: '5px',backgroundColor:'#FAFAFA' }}></input>
+                <input type="password" style={{ border: '1px solid #dbdbdb', height: '30px', borderRadius: '5px', backgroundColor: '#FAFAFA' }}></input>
                                 <br />
                                 <br />
                                 <label><b>Confirm Password</b></label>
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <input type="password" style={{ border: '1px solid #dbdbdb', height: '30px', borderRadius: '5px',backgroundColor:'#FAFAFA', }}></input>
+                <input type="password" style={{ border: '1px solid #dbdbdb', height: '30px', borderRadius: '5px', backgroundColor: '#FAFAFA', }}></input>
                                 <br />
                                 <br />
                                 <br />
@@ -207,19 +254,13 @@ function UpdateProfile() {
                     </div>
                 </TabPanel>
                 <TabPanel value={value} index={2}>
-                    Item Three
+                    Work in progress...
       </TabPanel>
                 <TabPanel value={value} index={3}>
-                    Item Four
+                    Work in progress...
       </TabPanel>
                 <TabPanel value={value} index={4}>
-                    Item Five
-      </TabPanel>
-                <TabPanel value={value} index={5}>
-                    Item Six
-      </TabPanel>
-                <TabPanel value={value} index={6}>
-                    Item Seven
+                    Work in progress...
       </TabPanel>
             </div>
 

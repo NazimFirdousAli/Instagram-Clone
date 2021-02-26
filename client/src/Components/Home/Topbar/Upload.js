@@ -16,6 +16,10 @@ import CancelIcon from '@material-ui/icons/Cancel';
 import { Link, useHistory, Redirect } from "react-router-dom";
 import { gql, useMutation,useQuery } from '@apollo/client'
 
+//alert
+import Alert from '@material-ui/lab/Alert';
+
+
 
 
 const ShowData =  gql`
@@ -98,6 +102,7 @@ function UploadPictures({handleClose}) {
         onCompleted: () => {
             setForm(initialState)
             alert("POST ADDED")
+            
         },
         onError: ({ message }) => {
             // <Alert severity="error">error</Alert>
@@ -136,9 +141,9 @@ function UploadPictures({handleClose}) {
                 <CancelIcon onClick={handleClose}/>
                 <CardHeader
                     avatar={
-                        <Avatar aria-label="recipe" className={classes.avatar} src={`/images/${data.loggedInUser.avatar}`} ></Avatar>
+                        <Avatar aria-label="recipe" className={classes.avatar} src={`/images/${data?.loggedInUser.avatar}`} ></Avatar>
                     }
-                    title={data.loggedInUser.name}
+                    title={data?.loggedInUser.name}
                 />
                 <form onSubmit={onFormSubmit}>
                     <img id="image-file" alt="Please add the image" src={imagePreview} height="200px" width="200px" style={{marginLeft:"20%"}} required/><br />

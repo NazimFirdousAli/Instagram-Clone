@@ -2,10 +2,12 @@ import React from 'react';
 import Stories from './Stories/Stories';
 import HomePosts from './HomePost';
 import Topbar from '../Topbar/Topbar';
+import { withAuthContext } from '../../../context';
 
 import './index.css'
 
-export default function Feed() {
+function Feed(props) {
+    console.log(props.userDataLoading)
     return (
         <div>
 
@@ -23,3 +25,5 @@ export default function Feed() {
         </div>
     )
 }
+
+export default withAuthContext(Feed);

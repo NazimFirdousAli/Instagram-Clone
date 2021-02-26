@@ -31,9 +31,9 @@ const RouteConfig = () => {
                     <Route exact path="/Signup" component={Signup}/>
                     {/* <Route exact path="/Feed" component={Feed}/> */}
                     <Route  path="/Signup/details" component={SignupDetails}/>
-                    <AuthenticationRoute  path="/Feed" component={Feed}/>
-                    <AuthenticationRoute  path="/profile" component={Profile}/>
-                    <AuthenticationRoute  path="/profile/updateprofile" component={UpdateProfile}/>
+                    <AuthenticationRoute exact  path="/feed" component={Feed}/>
+                    <AuthenticationRoute exact  path="/profile" component={Profile}/>
+                    <AuthenticationRoute exact  path="/profile/updateprofile" component={UpdateProfile}/>
                     <Route path="*" component={onError}/>
                         
                     
