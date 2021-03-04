@@ -5,12 +5,24 @@ const { ApolloError } = require('apollo-server');
 const prisma = new PrismaClient();
 
 function getTokenPayload(token) {
-  return jwt.verify(token, APP_SECRET);
+  return jwt.verify(token, APP_SECRET, (err, decoded) => {
+    //sir code for session
+    // if (err && err.message.indexOf('jwt expired') !== -1) {
+    //   throw new ApolloError('Session expired')
+    // }
+    // return decoded
+    if (err) {
+      throw new ApolloError('Session Expired');
+      
+    }
+    return decoded
+
+  });
 }
+
 
 async function getUserID({ req }) {
   // const { req } = context
-  console.log(req);
   const { authorization } = req.headers
   if (!authorization) throw new Error('Not authenticated');
 

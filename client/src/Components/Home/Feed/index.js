@@ -5,9 +5,11 @@ import Topbar from '../Topbar/Topbar';
 import { withAuthContext } from '../../../context';
 
 import './index.css'
+import { Token } from 'graphql';
 
 function Feed(props) {
     console.log(props.userDataLoading)
+    // console.log(localStorage.getItem())
     return (
         <div>
 

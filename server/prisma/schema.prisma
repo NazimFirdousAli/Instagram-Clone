@@ -18,7 +18,8 @@ model User {
   dateofbirth String?
   posts       Post[]
   postLikesBy PostLikeBy[]
-  Comment     Comment[]
+  followers   Followers[]
+  following   Following[]
 }
 
 model Post {
@@ -27,19 +28,19 @@ model Post {
   content     String?
   user        User         @relation(fields: [userId], references: [id])
   createdAt   DateTime     @default(now())
-  Comment     Comment[]
+  comment     Comment[]
   postLikesBy PostLikeBy[]
   userId      Int
 }
 
 model Comment {
-  id        Int       @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   content   String?
-  post      Post      @relation(fields: [postId], references: [id])
-  createdAt DateTime?
+  post      Post     @relation(fields: [postId], references: [id])
   postId    Int
-  User      User?     @relation(fields: [userId], references: [id])
+  user      User?    @relation(fields: [userId], references: [id])
   userId    Int?
+  createdAt DateTime @default(now())
 }
 
 model PostLikeBy {
@@ -49,4 +50,17 @@ model PostLikeBy {
   user      User?     @relation(fields: [userId], references: [id])
   userId    Int?
   createdAt DateTime?
+}
+
+model Followers {
+  id        Int            @id @default(autoincrement())
+  user      User?          @relation(fields: [userId], references: [id])
+  userId    Int?
+}
+
+
+model Following {
+  id        Int            @id @default(autoincrement())
+  user      User          @relation(fields: [userId], references: [id])
+  userId    Int
 }

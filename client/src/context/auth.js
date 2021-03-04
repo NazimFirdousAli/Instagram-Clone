@@ -27,6 +27,7 @@ export default function AuthProvider({ children }) {
         },
         onError: ({ message }) => {
             console.log(message);
+            localStorage.clear()
         }
     });
     useEffect(() => {

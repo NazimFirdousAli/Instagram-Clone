@@ -13,6 +13,10 @@ module.exports = gql`
         avatar:String
         dateofbirth:String
         posts:[Post!]!
+        followers:[Followers!]!
+        following:[Following!]!
+
+
     }
 
     type Post{
@@ -20,6 +24,24 @@ module.exports = gql`
         picture:String
         content:String!
         user:User
+        Comment:[Comment!]!
+    }
+    type Comment{
+        id:Int!
+        content:String!
+        post:Post!
+        user:User!
+    }
+
+    type Followers{
+        id:Int!
+        user:User!
+    }
+
+    
+    type Following{
+        id:Int!
+        user:User!
     }
 
     enum Gender {
@@ -44,6 +66,10 @@ module.exports = gql`
         createPost(picture:Upload!, content:String!):Post!
         updateDetails(name:String!,email:String!,phonenumber:String!,avatar:Upload):User!
         updatePassword(password:String!):User!
+
+        createComment(postId:Int! content:String!):Post!
+
+        followingUser(userId:Int):User!
 
         }
     type Subscription {

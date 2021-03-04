@@ -194,7 +194,7 @@ function ViewImageDetails({ post,handleClose }) {
                 {comment
                     .filter((_, i) => !viewAllComment ? i < 2 : _)
                     .map((com, ind) => (
-                        <div style={{ display: 'flex', justifyContent: 'space-evenly' }} key={ind}>
+                        <div style={{ display: 'flex', justifyContent: 'space-evenllef' }} key={ind}>
                             <img alt="avatar" className={classes.commentAvatar} src={com.picture} />
                             <div style={{ flexDirection: 'row', textAlign: 'initial' }}>
                                 <div> {com.name}</div>

@@ -128,11 +128,9 @@ function Login() {
             localStorage.setItem(AUTH_TOKEN, data.Login.token)
             history.push('/Feed')
             console.log(localStorage)
-            console.log()
-            // }
 
         },
-        onerror: (message) => {
+        onError: ({message}) => {
             alert(message)
         }
     })

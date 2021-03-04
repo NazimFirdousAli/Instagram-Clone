@@ -11,10 +11,9 @@ import { Paper, FormControl, TextField, Button } from '@material-ui/core';
 import FacebookIcon from '@material-ui/icons/Facebook';
 import { makeStyles } from '@material-ui/core/styles';
 import 'react-phone-number-input/style.css'
-import PhoneInput,{ formatPhoneNumber, formatPhoneNumberIntl, isValidPhoneNumber } from 'react-phone-number-input'
-import { parsePhoneNumber } from 'react-phone-number-input'
-import Snackbar from '@material-ui/core/Snackbar';
-import MuiAlert from '@material-ui/lab/Alert';
+// import PhoneInput,{ formatPhoneNumber, formatPhoneNumberIntl, isValidPhoneNumber } from 'react-phone-number-input'
+import PhoneInput from 'react-phone-input-2'
+import 'react-phone-input-2/lib/style.css'
 
 
 const useStyles = makeStyles((theme) => ({
@@ -189,7 +188,7 @@ function Signup() {
                         <br />
                         <form className={classes.inputField} onSubmit={submitForm} >
                             {/* helperText="incorrect entry" */}
-                            <PhoneInput international defaultCountry={countryCode} name="phonenumber" onChange={onFormChange} required />
+                            <PhoneInput country={countryCode.toLocaleLowerCase()} name="phonenumber" onChange={onFormChange} required />
                             <TextField name="name" onChange={onFormChange} type="text" label="Full Name" variant="outlined" required />
                             <TextField name="email" onChange={onFormChange} type="email" label="Email" variant="outlined" required />
                             <TextField name="password" onChange={onFormChange} type="password" label="Password" variant="outlined" required />

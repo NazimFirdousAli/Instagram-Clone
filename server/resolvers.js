@@ -1,3 +1,7 @@
+
+const { saveImage } = require('./saveFile');
+
+
 const { PrismaClient, Prisma } = require('@prisma/client')
 const prisma = new PrismaClient();
 
@@ -19,7 +23,7 @@ module.exports = {
         // allPosts: async () => prisma.post.findMany(),
         userPosts: async (root, args, context, info) => {
             const user = await getUserID(context)
-            console.log(user.id)
+            // console.log(user.id)
             const allpost = await prisma.user.findUnique({
                 where: {
                     id: user.id
@@ -39,19 +43,24 @@ module.exports = {
 
             const hashPassword = bcrypt.hashSync(password, 10)
             data.password = hashPassword;
-            data.avatar = await new Promise((resolve, reject) => {
-                return avatar.then(({ createReadStream, ...rest }) => {
-                    const id = Math.random().toString(32).substr(7);
-                    const filename = `${id}-${rest.filename}`;
-                    if (!fs.existsSync("./uploads")) fs.mkdirSync("./uploads");
-                    createReadStream()
-                        .pipe(fs.createWriteStream(path.join('./uploads', filename)))
-                        .on('error', (error) => reject(new Error(error.message)))
-                        .on('finish', () => resolve(filename));
-                })
-            })
+            
+            if (avatar && typeof avatar === 'object') {
+                data.avatar = await saveImage(avatar);
+              }
+            
+            // data.avatar = await new Promise((resolve, reject) => {
+            //     return avatar.then(({ createReadStream, ...rest }) => {
+            //         const id = Math.random().toString(32).substr(7);
+            //         const filename = `${id}-${rest.filename}`;
+            //         if (!fs.existsSync("./uploads")) fs.mkdirSync("./uploads");
+            //         createReadStream()
+            //             .pipe(fs.createWriteStream(path.join('./uploads', filename)))
+            //             .on('error', (error) => reject(new Error(error.message)))
+            //             .on('finish', () => resolve(filename));
+            //     })
+            // })
 
-            console.log('after', data.avatar);
+            // console.log('after', data.avatar);
 
             const createUser = await prisma.user.create({ data })
 
@@ -73,7 +82,7 @@ module.exports = {
             if (!checkPassword) {
                 throw new Error("Password Not Match")
             }
-            const token = jwt.sign({ userId: findUser.id }, APP_SECRET);
+            const token = jwt.sign({ userId: findUser.id }, APP_SECRET, { expiresIn: '1m' });
             return {
                 token,
                 user: findUser
@@ -102,7 +111,7 @@ module.exports = {
             return prisma.post.create({ data })
         },
 
-        updateDetails: async (root, {avatar, ...data }, context, info) => {
+        updateDetails: async (root, { avatar, ...data }, context, info) => {
             // ...data: [name, email, phonenumber]
             const user = await getUserID(context)
             // data.avatar = await saveImage(data.avatar, user.avatar)
@@ -111,37 +120,33 @@ module.exports = {
             })
             if (isEmailDuplicate) throw new Error('Email already exists')
 
-            data.avatar = await new Promise((resolve,reject)=> {
-                avatar.then(({ createReadStream, ...rest }) => {
-                    const filename = `${Math.random().toString(32).substr(7, 5)}-${rest.filename}`;
-        
-                    // checking whether the uploads folder is exists
-                    if (!existsSync('./uploads')) mkdirSync('./uploads');
-        
-                    // deleting if old file is given
-                    if (user.avatar && existsSync(`./uploads/${user.avatar}`)) unlinkSync(`./uploads/${user.avatar}`);
-        
-                    createReadStream()
-                        .pipe(createWriteStream(path.join('./uploads', filename)))
-                        .on('error', (error) => reject(new Error(error.message)))
-                        .on('finish', () => resolve(filename));
-                });
-            })
+            if (avatar && typeof avatar === 'object') {
+                data.avatar = await saveImage(avatar, user.avatar || false);
+            }
+
+
             const updateData = await prisma.user.update({
                 where: { id: user.id },
                 data
             })
 
             return updateData
-        }
-        // showData: async(root,args,context,info) => {
-        //     const userToken = await getUserID(context)
-        //     const show = await prisma.token.findUnique({
-        //         where:{token:userToken}
-        //     })
-        //     return(user)
+        },
+        createComment: async (root, { postId, ...data }, context, info) => {
+            const user = await getUserID(context);
+            const post = await prisma.post.findUnique({ where: { id: postId } });
+            data.postId = post.id
+            data.userId = user.id
+            console.log(data, postId, userId)
 
-        // }
+            return prisma.comment.create({ data })
+        },
+
+        followingUser:async(root,data,context,info) => {
+            const user = await getUserID(context);
+            data.userId = user.id
+            return prisma.following.create({data})
+        }
     },
 
     User: {
