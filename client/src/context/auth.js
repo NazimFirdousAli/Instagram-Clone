@@ -1,5 +1,7 @@
 import React, { createContext, useState, useEffect } from 'react'
 import { gql, useLazyQuery } from '@apollo/client'
+import { useHistory } from 'react-router-dom';
+import AUTH_TOKEN from '../Components/constants';
 
 const USER = gql`
 query{
@@ -12,6 +14,7 @@ query{
 }
 `
 
+
 const { Provider, Consumer } = createContext()
 
 export const withAuthContext = Component => props => (
@@ -19,6 +22,7 @@ export const withAuthContext = Component => props => (
 )
 
 export default function AuthProvider({ children }) {
+    const history = useHistory();     //////////////////////FOR HISTORY///////////////////////
     const [state, setState] = useState({})
     const [refetchUser, { loading }] = useLazyQuery(USER, {
         fetchPolicy: 'no-cache',
@@ -27,7 +31,10 @@ export default function AuthProvider({ children }) {
         },
         onError: ({ message }) => {
             console.log(message);
-            localStorage.clear()
+            if (message.indexOf("Session Expired" !== -1)) {
+                localStorage.removeItem(AUTH_TOKEN)
+                history.push('/')
+            }
         }
     });
     useEffect(() => {

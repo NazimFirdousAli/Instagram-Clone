@@ -43,11 +43,11 @@ module.exports = {
 
             const hashPassword = bcrypt.hashSync(password, 10)
             data.password = hashPassword;
-            
+
             if (avatar && typeof avatar === 'object') {
                 data.avatar = await saveImage(avatar);
-              }
-            
+            }
+
             // data.avatar = await new Promise((resolve, reject) => {
             //     return avatar.then(({ createReadStream, ...rest }) => {
             //         const id = Math.random().toString(32).substr(7);
@@ -82,7 +82,7 @@ module.exports = {
             if (!checkPassword) {
                 throw new Error("Password Not Match")
             }
-            const token = jwt.sign({ userId: findUser.id }, APP_SECRET, { expiresIn: '1m' });
+            const token = jwt.sign({ userId: findUser.id }, APP_SECRET, { expiresIn: '1d' });
             return {
                 token,
                 user: findUser
@@ -132,6 +132,24 @@ module.exports = {
 
             return updateData
         },
+        updatePassword: async (root, {oldPassword,newPassword, ...data }, context, info) => {
+            const user = await getUserID(context)
+
+            const match = await bcrypt.compare(oldPassword, user.password);
+
+            if (!match) throw new Error('You type incorrect password')
+            if (oldPassword == newPassword) throw new Error('Password is same as previous')
+
+            const hashPassword = bcrypt.hashSync(newPassword, 10)
+            data.password = hashPassword
+
+            const updatedData = await prisma.user.update({
+                where: { id: user.id },
+                data
+            })
+            return "Pasword Updated"
+        },
+
         createComment: async (root, { postId, ...data }, context, info) => {
             const user = await getUserID(context);
             const post = await prisma.post.findUnique({ where: { id: postId } });
@@ -142,10 +160,10 @@ module.exports = {
             return prisma.comment.create({ data })
         },
 
-        followingUser:async(root,data,context,info) => {
+        followingUser: async (root, data, context, info) => {
             const user = await getUserID(context);
             data.userId = user.id
-            return prisma.following.create({data})
+            return prisma.following.create({ data })
         }
     },
 

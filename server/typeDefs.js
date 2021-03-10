@@ -65,7 +65,7 @@ module.exports = gql`
         Login(email:String!, password:String!):Authpayload!
         createPost(picture:Upload!, content:String!):Post!
         updateDetails(name:String!,email:String!,phonenumber:String!,avatar:Upload):User!
-        updatePassword(password:String!):User!
+        updatePassword(oldPassword:String!,newPassword:String!):String!
 
         createComment(postId:Int! content:String!):Post!
 

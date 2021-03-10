@@ -21,11 +21,26 @@ import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 import InputAdornment from "@material-ui/core/InputAdornment";
 import Button from '@material-ui/core/Button';
+import Hidden from '@material-ui/core/Hidden';
+import { withAuthContext } from '../context/auth.js';
+
 
 const useStyles = makeStyles((theme) => ({
     root: {
         flexGrow: 1,
         backgroundColor: "#FAFAFA",
+        [theme.breakpoints.down("sm")]: {
+            marginLeft:'-50%'
+        },
+        [theme.breakpoints.down("xs")]: {
+            marginLeft:'0%',
+            marginTop:'-20%',
+            backgroundColor:'White'
+            
+        },
+
+        
+        
     },
     paper: {
         padding: theme.spacing(2),
@@ -33,14 +48,32 @@ const useStyles = makeStyles((theme) => ({
         backgroundColor: "#FFFFFF",
         height: '400px',
         width: '320px',
-        marginTop: '30px',
-        border: '1px solid #FAFAFA '
+        marginTop: '60px',
+        border: '1px solid #FAFAFA',
+        [theme.breakpoints.down("md")]: {
+            marginTop: '15%',
+            height: '55%'
+        },
+        [theme.breakpoints.down("sm")]: {
+            marginTop: '10%',
+            height: '80%',
+        },
+        [theme.breakpoints.down("xs")]: {
+            height:'100%',
 
-
+        },
+        
+        
+        
     },
     mobile: {
         marginLeft: '40%',
-        marginTop: '33px'
+        marginTop: '33px',
+        [theme.breakpoints.down("md")]: {
+            width: '90%',
+            marginLeft: '20%'
+        },
+        
     },
     logo: {
         marginTop: '5px'
@@ -55,6 +88,13 @@ const useStyles = makeStyles((theme) => ({
         height: '41px',
         width: '320px',
         marginTop: '13px',
+        [theme.breakpoints.down("md")]: {
+            height: '5%'
+        },
+        [theme.breakpoints.down("xs")]: {
+            marginTop:'5%',
+
+        },
     },
     textField: {
         marginTop: '20px',
@@ -63,7 +103,7 @@ const useStyles = makeStyles((theme) => ({
         width: "255px",
         border: '1px solid #EDEDED',
         paddingLeft: "6px",
-        borderRadius: '3px'
+        borderRadius: '3px',
     },
     textField1: {
         marginTop: '15px',
@@ -82,6 +122,9 @@ const useStyles = makeStyles((theme) => ({
     para1: {
         fontSize: '14px',
         margin: '15px',
+        [theme.breakpoints.down("md")]: {
+            marginTop: '-10px',
+        }
     },
 }));
 
@@ -105,7 +148,7 @@ const initialState = {
     password: ''
 }
 
-function Login() {
+function Login({ refetchUser }) {
     const [showPassword, setShowPassword] = useState(false);
     const toggleShowPassword = () => setShowPassword(!showPassword);
 
@@ -123,14 +166,13 @@ function Login() {
     const history = useHistory();
     const [login] = useMutation(LOGIN, {
         onCompleted: (data) => {
-
             console.log(data)
             localStorage.setItem(AUTH_TOKEN, data.Login.token)
             history.push('/Feed')
             console.log(localStorage)
-
+            refetchUser()
         },
-        onError: ({message}) => {
+        onError: ({ message }) => {
             alert(message)
         }
     })
@@ -154,13 +196,15 @@ function Login() {
         <div className={classes.root}>
             <Grid container spacing={6}>
                 <Grid item xs={12} sm={6}>
-                    <div>
-                        <img className={classes.mobile} src={mobile} alt='Mobile Phone' />
-                        {/* <img src={mobilePic1} className="target" ref={ref} />
+                    <Hidden smDown >
+                        <div>
+                            <img className={classes.mobile} src={mobile} alt='Mobile Phone' />
+                            {/* <img src={mobilePic1} className="target" ref={ref} />
                     <img src={mobilePic2} className="target" ref={ref} />
                     <img src={mobilePic3} className="target" ref={ref} />
                      */}
-                    </div>
+                        </div>
+                    </Hidden>
                 </Grid>
                 <Grid item xs={12} sm={6}>
                     <Paper className={classes.paper}>
@@ -169,7 +213,7 @@ function Login() {
                         </div>
                         <div>
                             <form className={classes.FormInput} onSubmit={onValueChange} >
-                                <TextField name="email" onChange={onFormChange} className={classes.InputField} className={classes.textField} InputProps={{ disableUnderline: true }} InputLabelProps={{ style: { color: '#9B8E9B', paddingLeft: "5px", fontSize: "15px", fontFamily: "Segoe UI" }, }} id="Username" label="Enter email" required />
+                                <TextField name="email" onChange={onFormChange} className={classes.InputField} className={classes.textField} InputProps={{ disableUnderline: true }} InputLabelProps={{ style: { color: '#9B8E9B', paddingLeft: "5px", fontSize: "15px", fontFamily: "Segoe UI" } }} id="Username" label="Enter email" required />
                                 <TextField name="password" onChange={onFormChange} className={classes.InputField} className={classes.textField1} InputLabelProps={{ style: { color: '#9B8E9B', paddingLeft: "5px", fontSize: "15px", fontFamily: "Segoe UI" }, }} label='Password' type={showPassword ? "text" : "password"} // <-- This is where the magic happens
                                     InputProps={{ // <-- This is where the toggle button is added.
                                         disableUnderline: true,
@@ -200,4 +244,4 @@ function Login() {
     )
 }
 
-export default Login
+export default withAuthContext(Login)

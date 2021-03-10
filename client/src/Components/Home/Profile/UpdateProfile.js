@@ -15,6 +15,7 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
+import { createMuiTheme } from '@material-ui/core/styles'
 
 
 
@@ -36,6 +37,12 @@ mutation($name:String!,$email:String!,$phonenumber:String!,$avatar:Upload){
     }
 }
 `
+const UPDATEPASSWORD = gql`
+mutation($oldPassword:String!,$newPassword:String!){
+    updatePassword(oldPassword:$oldPassword,newPassword:$newPassword)
+}
+`
+
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
 
@@ -111,16 +118,29 @@ const initialState = {
     }
 
 }
+const initialState1 = {
+    oldPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+}
+
+
 
 function UpdateProfile({ user }) {
     const classes = useStyles();
     const [tabValue, setTabValue] = React.useState(0);
     const [isLoading, setLoading] = useState(true);
 
+
+
     // donot change
     const [previousValues, setPreviousValues] = useState(initialState)
     // changeable
     const [userData, setUserData] = useState(initialState);
+
+
+    const [password, setPassword] = useState(initialState1)
+
 
     const [updateDetails] = useMutation(UPDATEUSER, {
         onCompleted: ({ data }) => {
@@ -151,7 +171,8 @@ function UpdateProfile({ user }) {
             setPreviousValues(reformUser(user))
             setLoading(false);
         }
-    }, [user])
+    }, [user]);
+    
 
     const handleChangeTab = (event, newValue) => setTabValue(newValue);
 
@@ -187,6 +208,42 @@ function UpdateProfile({ user }) {
         return !_.isEqual(previousValues, userData);
     }
     console.log('canBeSubmitted', !canBeSubmitted())
+
+    const [updatepassword] = useMutation(UPDATEPASSWORD, {
+        onCompleted: () => {
+            alert('Password Changed Sucessfully')
+            setPassword(initialState1)
+        },
+        onError: ({ message }) => {
+            alert(message)
+
+        }
+    })
+    const onFormSubmit = (event) => {
+        event.preventDefault();
+        if (password.newPassword != password.confirmPassword) {
+            alert("New and confirm Password not Match")
+        }
+        else {
+            updatepassword({ variables: password })
+        }
+
+    }
+
+    const onPasswordChange = (event) => {
+        setPassword(prev => ({
+            ...prev,
+            [event.target.name]: event.target.value
+        }))
+    }
+
+
+
+
+
+
+
+
 
     // include loading from updateProfile api
     if (isLoading) return <h1>Loading</h1>;
@@ -258,10 +315,10 @@ function UpdateProfile({ user }) {
                 </TabPanel>
                 <TabPanel value={tabValue} index={1}>
                     <div style={{ display: 'flex', justifyContent: 'center', marginLeft: '70px' }}>
-                        <form>
+                        <form onSubmit={onFormSubmit}>
                             <CardHeader
                                 avatar={
-                                    <img src={profilePicture} className={classes.avatar} alt='Saad' />
+                                    <img src={userData.avatar.preview} className={classes.avatar} alt={userData.name} />
                                 }
                                 action={
                                     <IconButton
@@ -271,27 +328,27 @@ function UpdateProfile({ user }) {
                                     >
                                     </IconButton>
                                 }
-                                title='USERNAME'
+                                title={userData.name}
                             />
                             <div style={{ textAlign: 'right' }}>
                                 <label><b>Old Password</b></label>
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <input type="password" style={{ border: '1px solid #dbdbdb', height: '30px', borderRadius: '5px', backgroundColor: '#FAFAFA' }} />
+                <input onChange={onPasswordChange} name="oldPassword" value={password.oldPassword} type="password" style={{ border: '1px solid #dbdbdb', height: '30px', borderRadius: '5px', backgroundColor: '#FAFAFA' }} required />
                                 <br />
                                 <br />
                                 <label><b>New Password</b></label>
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <input type="password" style={{ border: '1px solid #dbdbdb', height: '30px', borderRadius: '5px', backgroundColor: '#FAFAFA' }} />
+                <input onChange={onPasswordChange} name="newPassword" value={password.newPassword} type="password" style={{ border: '1px solid #dbdbdb', height: '30px', borderRadius: '5px', backgroundColor: '#FAFAFA' }} required />
                                 <br />
                                 <br />
                                 <label><b>Confirm Password</b></label>
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <input type="password" style={{ border: '1px solid #dbdbdb', height: '30px', borderRadius: '5px', backgroundColor: '#FAFAFA', }} />
+                <input onChange={onPasswordChange} name="confirmPassword" value={password.confirmPassword} type="password" style={{ border: '1px solid #dbdbdb', height: '30px', borderRadius: '5px', backgroundColor: '#FAFAFA', }} required />
                                 <br />
                                 <br />
                                 <br />
                                 <div style={{ marginRight: '90px' }}>
-                                    <Button variant="contained" style={{ backgroundColor: '#17a2f7', color: 'white' }}>
+                                    <Button type="submit" variant="contained" style={{ backgroundColor: '#17a2f7', color: 'white' }}>
                                         Change password</Button>
                                 </div>
 

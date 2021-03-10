@@ -1,8 +1,8 @@
-import { React, useState, useEffect,createContext } from 'react'
+import { React, useState, useEffect, createContext } from 'react'
 import { Link } from "react-router-dom";
 import { gql, useMutation } from '@apollo/client'
 import AUTH_TOKEN from './constants.js'
-import { Redirect,useHistory } from 'react-router-dom'
+import { Redirect, useHistory } from 'react-router-dom'
 
 import instalogo from '../Images/instalogo.png'
 
@@ -90,9 +90,9 @@ const initialState = {
 function Signup() {
     const [form, setForm] = useState(initialState)
     const [countryCode, setCountryCode] = useState('');
-    
+
     // console.log({ countryCode })
-    
+
     const data = createContext(form)
 
     useEffect(() => {
@@ -117,29 +117,29 @@ function Signup() {
     })
     const onFormChange = (event) => {
         console.log(event)
-        if(event)
-        if (typeof event === 'string' || !event) {
-            setForm({ ...form, phonenumber: event || '' })
-        } 
-        else {
-            const { name, type, value } = event.target
-            console.log({type})
-            if (type == 'file') {
-                // console.log(event.target.files[0])
-                setForm({
-                    ...form,
-                    avatar: event.target.files[0]
-
-                })
+        if (event)
+            if (typeof event === 'string' || !event) {
+                setForm({ ...form, phonenumber: event || '' })
             }
             else {
-                setForm({
-                    ...form,
-                    [event.target.name]: event.target.value,
+                const { name, type, value } = event.target
+                console.log({ type })
+                if (type == 'file') {
+                    // console.log(event.target.files[0])
+                    setForm({
+                        ...form,
+                        avatar: event.target.files[0]
 
-                })
+                    })
+                }
+                else {
+                    setForm({
+                        ...form,
+                        [event.target.name]: event.target.value,
+
+                    })
+                }
             }
-        }
     }
     const history = useHistory();
     const submitForm = (event) => {
@@ -152,7 +152,7 @@ function Signup() {
             signUp({ variables: form })
             console.log(form)
             history.push('/Signup/details')
-            
+
 
         }
 
@@ -188,7 +188,12 @@ function Signup() {
                         <br />
                         <form className={classes.inputField} onSubmit={submitForm} >
                             {/* helperText="incorrect entry" */}
-                            <PhoneInput country={countryCode.toLocaleLowerCase()} name="phonenumber" onChange={onFormChange} required />
+                            <PhoneInput containerStyle={{ height: '35px' }}
+                                fullWidth="true"
+                                inputProps={{
+                                    required: true,
+                                    autoFocus: true
+                                }} country={countryCode.toLocaleLowerCase()} name="phonenumber" onChange={onFormChange} required />
                             <TextField name="name" onChange={onFormChange} type="text" label="Full Name" variant="outlined" required />
                             <TextField name="email" onChange={onFormChange} type="email" label="Email" variant="outlined" required />
                             <TextField name="password" onChange={onFormChange} type="password" label="Password" variant="outlined" required />

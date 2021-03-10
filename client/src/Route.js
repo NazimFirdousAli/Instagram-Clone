@@ -14,6 +14,7 @@ import {
     Switch,
     Route,
 } from "react-router-dom"
+import AuthProvider from './context/auth.js'
 
 function onError (){
     return(
@@ -24,8 +25,9 @@ function onError (){
 const RouteConfig = () => {
     return (
         <div>
-            
+
             <Router>
+            <AuthProvider>
                 <Switch>
                     <Route exact path="/" component={Login}/>
                     <Route exact path="/Signup" component={Signup}/>
@@ -40,6 +42,7 @@ const RouteConfig = () => {
                     
 
                 </Switch>
+            </AuthProvider>
             </Router>
 
         </div>
